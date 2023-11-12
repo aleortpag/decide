@@ -133,13 +133,15 @@
         </div>
 
     </div>
-
     <div v-if="!signup">
-        <button v-on:click="showStatistics" class="btn btn-secondary">Mostrar estadísticas</button>
+        <button v-on:click="showStatistics" class="btn btn-secondary mt-3">Mostrar estadísticas</button>
     </div>
     
     <div v-if="statistics" class="statistics">
         <h3>Estadísticas en tiempo real de la votación</h3>
+        <ul>
+            <li>Numero de votantes en la votación: [[ total_voters ]]</li>
+        </ul>
     </div>
 
 </div>
@@ -166,11 +168,14 @@
     <script>
         const { createApp } = Vue
         var voting = {{voting|safe}};
+        var census = {{census|safe}};
         createApp({
             delimiters: ['[[', ']]'],
             data() {
                 return {
                     voting: voting,
+                    census: census,
+                    total_voters: census.length,
                     selected: "",
                     signup: true,
                     statistics: false,

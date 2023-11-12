@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import Http404
 
 from base import mods
+from census.models import Census
 
 
 # TODO: check permissions and census
@@ -26,5 +27,11 @@ class BoothView(TemplateView):
             raise Http404
 
         context['KEYBITS'] = settings.KEYBITS
+
+        voters = Census.objects.filter(voting_id=vid)
+        voter_ids = []
+        for r in voters:
+            voter_ids.append(r.id)
+        context['census'] = voter_ids
 
         return context
