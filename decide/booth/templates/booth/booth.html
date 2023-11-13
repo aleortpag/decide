@@ -142,6 +142,8 @@
         <ul>
             <li>Numero de votantes en la votación: [[ census ]]</li>
             <li>Numero de votos emitidos hasta ahora: [[ votes ]]</li>
+            <li>Porcentaje de votos emitidos hasta ahora: [[ percentage ]]</li>
+
         </ul>
     </div>
 
@@ -178,6 +180,7 @@
                     voting: voting,
                     census: census,
                     votes: votes,
+                    percentage: (votes / census * 100).toFixed(2) + "%",
                     selected: "",
                     signup: true,
                     statistics: false,
