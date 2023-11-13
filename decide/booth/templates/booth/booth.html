@@ -140,7 +140,8 @@
     <div v-if="statistics" class="statistics">
         <h3>Estadísticas en tiempo real de la votación</h3>
         <ul>
-            <li>Numero de votantes en la votación: [[ total_voters ]]</li>
+            <li>Numero de votantes en la votación: [[ census ]]</li>
+            <li>Numero de votos emitidos hasta ahora: [[ votes ]]</li>
         </ul>
     </div>
 
@@ -161,7 +162,7 @@
     <script src="{% static "crypto/elgamal.js" %}"></script>
 
     <!-- Vuejs -->
-    <script src="https://unpkg.com/vue@latest"</script>
+    <script src="https://unpkg.com/vue@latest"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
     <script src="https://unpkg.com/bootstrap@5.2.2/dist/js/bootstrap.js"></script>
 
@@ -169,13 +170,14 @@
         const { createApp } = Vue
         var voting = {{voting|safe}};
         var census = {{census|safe}};
+        var votes = {{votes|safe}};
         createApp({
             delimiters: ['[[', ']]'],
             data() {
                 return {
                     voting: voting,
                     census: census,
-                    total_voters: census.length,
+                    votes: votes,
                     selected: "",
                     signup: true,
                     statistics: false,

@@ -5,6 +5,7 @@ from django.http import Http404
 
 from base import mods
 from census.models import Census
+from store.models import Vote
 
 
 # TODO: check permissions and census
@@ -28,10 +29,11 @@ class BoothView(TemplateView):
 
         context['KEYBITS'] = settings.KEYBITS
 
+        # Get the number of voters registered in the census
         voters = Census.objects.filter(voting_id=vid)
-        voter_ids = []
-        for r in voters:
-            voter_ids.append(r.id)
-        context['census'] = voter_ids
+        context['census'] = len(voters)
 
+        # Get all the current votes
+        votes = Vote.objects.filter(voting_id=vid)
+        context['votes'] = len(votes)
         return context
