@@ -1,10 +1,15 @@
 from django import forms
-from .models import Usuario
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
-class RegistroForm(forms.ModelForm):
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    nombre = forms.CharField(max_length=50, required=True)
+
     class Meta:
-        model = Usuario
-        fields = ['nombre', 'email', 'contraseña']  
-        widgets = {
-            'contraseña': forms.PasswordInput(),
-        }
+        model = User
+        fields = ['username', 'nombre', 'email', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        

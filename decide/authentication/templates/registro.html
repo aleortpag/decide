@@ -10,5 +10,10 @@
         {{ form.as_p }}
         <button type="submit">Registrarse</button>
     </form>
+
+    {% if form.errors %}
+        <p>Hubo errores en el formulario. Por favor, corrígelos:</p>
+        {{ form.errors }}
+    {% endif %}
 </body>
 </html>

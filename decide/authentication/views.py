@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import RegistroForm
+from .forms import CustomUserCreationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 
@@ -59,19 +59,17 @@ class RegisterView(APIView):
 
 class RegistroView(APIView):
     def get(self, request):
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
         return render(request, 'registro.html', {'form': form})
 
     def post(self, request):
-        form = UserCreationForm(request.data)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            # Autenticar al usuario después del registro
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(request, username=username, password=password)
-            login(request, user)
-            token, _ = Token.objects.get_or_create(user=user)
+            form.save()
             return redirect('/')
         else:
-            return Response(form.errors, status=HTTP_400_BAD_REQUEST)
+            return render(request, 'registro.html', {'form': form})
+
+
+
+
