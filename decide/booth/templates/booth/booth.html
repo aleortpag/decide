@@ -143,7 +143,8 @@
             <li>Numero de votantes en la votación: [[ census ]]</li>
             <li>Numero de votos emitidos hasta ahora: [[ votes ]]</li>
             <li>Porcentaje de votos emitidos hasta ahora: [[ percentage ]]</li>
-
+            <li>Primer voto emitido: [[ first_date ]]</li>
+            <li>Último voto emitido: [[ last_date ]]</li>
         </ul>
     </div>
 
@@ -173,6 +174,9 @@
         var voting = {{voting|safe}};
         var census = {{census|safe}};
         var votes = {{votes|safe}};
+        var first_date = "{{ first_date|safe }}";
+        var last_date = "{{last_date|safe}}";
+        
         createApp({
             delimiters: ['[[', ']]'],
             data() {
@@ -180,6 +184,8 @@
                     voting: voting,
                     census: census,
                     votes: votes,
+                    first_date: first_date,
+                    last_date: last_date,
                     percentage: (votes / census * 100).toFixed(2) + "%",
                     selected: "",
                     signup: true,

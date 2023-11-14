@@ -36,4 +36,13 @@ class BoothView(TemplateView):
         # Get all the current votes
         votes = Vote.objects.filter(voting_id=vid)
         context['votes'] = len(votes)
+
+        # Get first and las vote date/time
+        datestimes_list = [date.voted for date in votes]
+        first_date = datestimes_list[0]
+        last_date = sorted(datestimes_list, reverse=True)[0]
+
+        context['first_date'] = first_date.strftime("%d/%m/%Y  a las %H:%M")
+        context['last_date'] = last_date.strftime("%d/%m/%Y  a las %H:%M")
+
         return context
