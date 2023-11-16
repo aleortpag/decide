@@ -2,68 +2,114 @@
 {% load i18n static %}
 
 {% block extrahead %}
-    <link type="text/css" rel="stylesheet"
-         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="{% static  'booth/style.css' %}" />
 {% endblock %}
 
 {% block content %}
-    <div id="app-visualizer">
-        <!-- Navbar -->
-        <nav class="navbar navbar-dark bg-dark">
-            <div class="container-fluid">
-                <h1 class="navbar-brand">Decide</h1>
-            </div>
-        </nav>
-          
+<div id="app-visualizer">
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <h1 class="navbar-brand">Decide</h1>
+        </div>
+    </nav>
 
-        <div class="voting container">
-            <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
 
-            <h2 v-if="!voting.start_date">Votación no comenzada</h2>
-            <h2 v-else-if="!voting.end_date">Votación en curso</h2>
-            <div v-else>
-                <h2 class="heading">Resultados:</h2>
+    <div class="voting container">
+        <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
 
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Opción</th>
-                            <th>Puntuación</th>
-                            <th>Votos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="opt in voting.postproc" :key="opt.number">
-                            <th>[[opt.option]]</th>
-                            <td>[[opt.postproc]]</td>
-                            <td class="text-muted">[[opt.votes]]</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <h2 v-if="!voting.start_date">Votación no comenzada</h2>
+        <h2 v-else-if="!voting.end_date">Votación en curso</h2>
+        <div v-else>
+            <h2 class="heading">Resultados:</h2>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Opción</th>
+                        <th>Puntuación</th>
+                        <th>Votos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="opt in voting.postproc" :key="opt.number">
+                        <th>[[opt.option]]</th>
+                        <td>[[opt.postproc]]</td>
+                        <td class="text-muted">[[opt.votes]]</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="pruebas"></h2>
+            <div id="canvas-container" style="width: 40%; height: 40%;display: flex;">
+                <canvas id="graph1" class="result-graph1"></canvas>
+                <canvas id="graph2" class="result-graph2"></canvas>
             </div>
 
         </div>
+
     </div>
+</div>
 {% endblock %}
 
 {% block extrabody %}
-    <!-- Vuejs -->
-    <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
-    <script src="https://unpkg.com/bootstrap@5.2.2/dist/js/bootstrap.js"></script>
+<!-- Vuejs -->
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+<script src="https://unpkg.com/bootstrap@5.2.2/dist/js/bootstrap.js"></script>
 
-    <script>
-        var voting = {{voting|safe}};
-        const { createApp } = Vue
-        createApp({
-            delimiters: ['[[', ']]'],
-            data() {
-                return {
-                    voting: voting
-                }
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    var voting = {{ voting | safe}};
+    const { createApp } = Vue
+    createApp({
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                voting: voting,
             }
-        }).mount('#app-visualizer')
-    </script>
+        }, mounted() {
+            var optionList = [];
+            var votesList = [];            
+
+            for (var i = 0; i < voting.postproc.length; i++) {
+                p = voting.postproc[i];
+                optionList.push(p.option);
+                votesList.push(p.votes);
+            }
+
+            iniciaGraph(optionList, votesList);
+        }
+    }).mount('#app-visualizer')
+
+    function iniciaGraph(optionList, votesList) {
+        var ctx1 = document.getElementById('graph1').getContext('2d');
+        var ctx2 = document.getElementById('graph2').getContext('2d');
+
+        var grafica1 = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                datasets: [{
+                    data: votesList
+                    //data: [20, 30, 10]
+                }],
+                labels: optionList
+            },
+        });
+
+        var grafica2 = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: votesList
+                    //data: [20, 30, 10],
+                }],
+                labels: optionList
+            },
+        });
+    }
+</script>
 </body>
 {% endblock %}
