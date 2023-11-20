@@ -118,12 +118,24 @@
         <div v-if="!signup">
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
             <h2>[[ voting.question.desc ]]</h2>
-            <form v-for="opt in voting.question.options" :key="opt.number">
+            <form v-if="votingType === 'normal'" v-for="opt in voting.question.options" :key="opt.number">
                 <div class="form-group">
                     <input type="radio" v-model="selected"
                                 :id="'q' + opt.number"
                                 name="question"
                                 :value="opt.number">
+                        [[ opt.option ]]
+                </div>
+            </form>
+            <form v-else-if="votingType === 'preference'" v-for="opt in voting.question.options" :key="opt.number">
+                <div class="form-group">
+                    <input type="number" v-model="preferences[opt.number]"
+                                :id="'q' + opt.number"
+                                name="question"
+                                min="1"
+                                max="{{ voting.question.options.count }}"
+                                class="form-control"
+                                placeholder="{% trans 'Preference (1 to' } {{ voting.question.options.count }}')'">
                         [[ opt.option ]]
                 </div>
             </form>
@@ -163,6 +175,8 @@
             data() {
                 return {
                     voting: voting,
+                    votingType: voting.voting_type,
+                    preferences: {},
                     selected: "",
                     signup: true,
                     successVote: false,
@@ -257,9 +271,16 @@
                     this.successVote = false;
                 },
                 decideEncrypt() {
-                    var bigmsg = BigInt.fromJSONObject(this.selected.toString());
-                    var cipher = ElGamal.encrypt(this.bigpk, bigmsg);
-                    return cipher;
+                    if (this.votingYpe === 'preference'){
+                        var preferencesArray = Object.values(this.preferences);
+                        var bigmsg = BigInt.fromJSONObject(JSON.stringify(preferencesArray));
+                        var chipher = ElGamal.encrypt(this.bigpj, bigmsg);
+                        return cipher;
+                    } else {
+                        var bigmsg = BigInt.fromJSONObject(this.selected.toString());
+                        var cipher = ElGamal.encrypt(this.bigpk, bigmsg);
+                        return cipher;
+                    }
                 },
                 decideSend(evt) {
                     evt.preventDefault();

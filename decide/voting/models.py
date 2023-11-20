@@ -10,6 +10,7 @@ from base.models import Auth, Key
 class Question(models.Model):
     desc = models.TextField()
 
+
     def __str__(self):
         return self.desc
 
@@ -18,6 +19,7 @@ class QuestionOption(models.Model):
     question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
     number = models.PositiveIntegerField(blank=True, null=True)
     option = models.TextField()
+    preference = models.IntegerField(blank=True, null=True)
 
     def save(self):
         if not self.number:
@@ -29,6 +31,11 @@ class QuestionOption(models.Model):
 
 
 class Voting(models.Model):
+
+    VOTING_TYPES = [('preference', 'Preference-Based Voting'), ('normal', 'Normal voting')]
+
+    voting_type = models.CharField(max_length=15, choices=VOTING_TYPES, default='normal',)
+
     name = models.CharField(max_length=200)
     desc = models.TextField(blank=True, null=True)
     question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
@@ -64,11 +71,15 @@ class Voting(models.Model):
         votes_format = []
         vote_list = []
         for vote in votes:
+            preferences = []
             for info in vote:
                 if info == 'a':
                     votes_format.append(vote[info])
                 if info == 'b':
                     votes_format.append(vote[info])
+                elif info == 'preference':
+                    preferences.append(vote[info])
+            votes_format.append(preferences)
             vote_list.append(votes_format)
             votes_format = []
         return vote_list
@@ -84,6 +95,9 @@ class Voting(models.Model):
         shuffle_url = "/shuffle/{}/".format(self.id)
         decrypt_url = "/decrypt/{}/".format(self.id)
         auths = [{"name": a.name, "url": a.url} for a in self.auths.all()]
+
+        if self.voting_type == 'preference':
+            tally_result = self.tally_preference_votes(votes)
 
         # first, we do the shuffle
         data = { "msgs": votes }
@@ -106,6 +120,22 @@ class Voting(models.Model):
         self.save()
 
         self.do_postproc()
+
+    def tally_preference_votes(self, votes):
+        options = self.question.options.all()
+
+        tally_result = {}
+
+        for option in options:
+            tally_result[option.number] = 0
+
+        for vote in votes:
+            preferences = vote[-1]
+            for i, preference in enumerate(preferences):
+                option_number = index + 1
+                tally_result[option_number] += preference
+
+        return tally_result
 
     def do_postproc(self):
         tally = self.tally

@@ -38,6 +38,8 @@ class VotingView(generics.ListCreateAPIView):
         question = Question(desc=request.data.get('question'))
         question.save()
         for idx, q_opt in enumerate(request.data.get('question_opt')):
+            if voting.voting_tpe == 'preference':
+                preference = request.data.get('preferences', [])[idx]
             opt = QuestionOption(question=question, option=q_opt, number=idx)
             opt.save()
         voting = Voting(name=request.data.get('name'), desc=request.data.get('desc'),
@@ -97,6 +99,13 @@ class VotingUpdate(generics.RetrieveUpdateDestroyAPIView):
             else:
                 voting.tally_votes(request.auth.key)
                 msg = 'Voting tallied'
+            if voting.voting_type == 'preference':
+                tally_result = self_tally_preference_votes(voting)
+                voting.tally = tally_result
+                voting.save()
+
+                msg = 'Voting tallied based on preference'
+                st = status.HTTP_200_OK
         else:
             msg = 'Action not found, try with start, stop or tally'
             st = status.HTTP_400_BAD_REQUEST
