@@ -3,8 +3,7 @@ name: Python application
 on:
   push:
     branches:
-      - develop
-      - master
+      - main
 
 jobs:
   build:
