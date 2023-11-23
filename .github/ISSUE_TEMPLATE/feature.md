@@ -1,7 +1,7 @@
 ---
 name: Feature
 about: Functional Increment
-title: "[Tipo] - [Descripción]"
+title: "[Feat] - [Descripción]"
 labels: Código
 assignees: ''
 
