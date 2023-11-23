@@ -130,15 +130,13 @@
             <form v-if="votingType === 'preference'" >
                 <div class="form-group" v-for="opt in voting.question.options" :key="opt.number">
                     [[ opt.option ]]
-                    {% with placeholder_text="Preference 1 to " %}
                     <input type="number" v-model="preferences[opt.number]"
                                 :id="'q' + opt.number"
                                 name="preference question"
                                 min="1"
                                 :max="voting.question.options.length"
                                 class="form-control"
-                                :placeholder="'Preference 1 to ' + voting.question.options.length">
-                    {% endwith %}    
+                                :placeholder="'Preference 1 to ' + voting.question.options.length">    
                 </div>
             </form>
             <button class="btn btn-primary mt-3" v-on:click="decideSend">
@@ -276,7 +274,7 @@
                     if (this.votingType === 'preference'){
                         var preferencesArray = Object.values(this.preferences);
                         var bigmsg = BigInt.fromJSONObject(JSON.stringify(preferencesArray));
-                        var chipher = ElGamal.encrypt(this.bigpj, bigmsg);
+                        var cipher = ElGamal.encrypt(this.bigpk, bigmsg);
                         return cipher;
                     } else {
                         var bigmsg = BigInt.fromJSONObject(this.selected.toString());
@@ -285,6 +283,7 @@
                     }
                 },
                 decideSend(evt) {
+                    console.log("Button clicked");
                     evt.preventDefault();
                     var v = this.decideEncrypt();
                     var data = {

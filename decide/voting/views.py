@@ -99,13 +99,6 @@ class VotingUpdate(generics.RetrieveUpdateDestroyAPIView):
             else:
                 voting.tally_votes(request.auth.key)
                 msg = 'Voting tallied'
-            if voting.voting_type == 'preference':
-                tally_result = self.tally_preference_votes(voting)
-                voting.tally = tally_result
-                voting.save()
-
-                msg = 'Voting tallied based on preference'
-                st = status.HTTP_200_OK
         else:
             msg = 'Action not found, try with start, stop or tally'
             st = status.HTTP_400_BAD_REQUEST

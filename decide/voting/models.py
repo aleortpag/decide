@@ -121,37 +121,41 @@ class Voting(models.Model):
 
         self.do_postproc()
 
-    def tally_preference_votes(self, votes):
-        options = self.question.options.all()
-
-        tally_result = {}
-
-        for option in options:
-            tally_result[option.number] = 0
-
-        for vote in votes:
-            preferences = vote[-1]
-            for i, preference in enumerate(preferences):
-                option_number = index + 1
-                tally_result[option_number] += preference
-
-        return tally_result
-
     def do_postproc(self):
         tally = self.tally
         options = self.question.options.all()
 
         opts = []
-        for opt in options:
-            if isinstance(tally, list):
-                votes = tally.count(opt.number)
-            else:
-                votes = 0
-            opts.append({
-                'option': opt.option,
-                'number': opt.number,
-                'votes': votes
-            })
+
+        if self.voting_type == 'normal':
+
+            for opt in options:
+                if isinstance(tally, list):
+                    votes = tally.count(opt.number)
+                else:
+                    votes = 0
+                opts.append({
+                    'option': opt.option,
+                    'number': opt.number,
+                    'votes': votes
+                })
+        
+        else:
+
+            option_counts = {opt.number: 0 for opt in options}
+
+            for pref in tally:
+
+                for rank, option_number in enumerate(pref, start=1):
+
+                    option_counts[option_number] += 1 /rank
+            
+            for opt_number, votes in option_counts.items():
+                opts.append({
+                    'option': options.get(number=opt_number).option,
+                    'number': opt_number,
+                    'votes': votes
+                })
 
         data = { 'type': 'IDENTITY', 'options': opts }
         postp = mods.post('postproc', json=data)
