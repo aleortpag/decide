@@ -97,29 +97,48 @@ class Voting(models.Model):
         auths = [{"name": a.name, "url": a.url} for a in self.auths.all()]
 
         if self.voting_type == 'preference':
-            tally_result = self.tally_preference_votes(votes)
+            self.tally_preference_votes(votes)
+            self.save()
+        else:
 
         # first, we do the shuffle
-        data = { "msgs": votes }
-        response = mods.post('mixnet', entry_point=shuffle_url, baseurl=auth.url, json=data,
-                response=True)
-        if response.status_code != 200:
+            data = { "msgs": votes }
+            response = mods.post('mixnet', entry_point=shuffle_url, baseurl=auth.url, json=data,
+                   response=True)
+            if response.status_code != 200:
             # TODO: manage error
-            pass
+                pass
 
         # then, we can decrypt that
-        data = {"msgs": response.json()}
-        response = mods.post('mixnet', entry_point=decrypt_url, baseurl=auth.url, json=data,
-                response=True)
+            data = {"msgs": response.json()}
+            response = mods.post('mixnet', entry_point=decrypt_url, baseurl=auth.url, json=data,
+                    response=True)
 
-        if response.status_code != 200:
+            if response.status_code != 200:
             # TODO: manage error
-            pass
+                pass
 
-        self.tally = response.json()
-        self.save()
+            self.tally = response.json()
+            self.save()
 
         self.do_postproc()
+    
+    def tally_preference_votes(self, votes):
+        option_scores = {opt.number: 0 for opt in self.question.options.all()}
+        weights = list(range(len(option_scores), 0, -1))
+        for vote in votes:
+            preferences = vote['preferences']
+            for i, option_number in enumerate(preferences):
+                option_scores[option_number] += weights[i]
+        opts = []
+        for opt_number, score in option_scores.items():
+            opts.append({
+                'option': self.question.options.get(number=opt_number).option,
+                'number': opt_number,
+                'votes': score
+            })
+        sorted_opts = sorted(opts, key=lambda x: x['votes'], reverse=True)
+        return sorted_opts
 
     def do_postproc(self):
         tally = self.tally
