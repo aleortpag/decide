@@ -4,17 +4,17 @@ from rest_framework.status import (
         HTTP_400_BAD_REQUEST,
         HTTP_401_UNAUTHORIZED
 )
+from django.shortcuts import get_object_or_404, render, redirect
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import CustomUserCreationForm
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login
 
+from .forms import UserRegisterForm, UserLoginForm
 from .serializers import UserSerializer
+from django.contrib.auth.models import auth
+from django.contrib.auth import authenticate, login, logout
 
 
 class GetUserView(APIView):
@@ -57,19 +57,32 @@ class RegisterView(APIView):
             return Response({}, status=HTTP_400_BAD_REQUEST)
         return Response({'user_pk': user.pk, 'token': token.key}, HTTP_201_CREATED)
 
-class RegistroView(APIView):
+class UserRegisterView(APIView):
     def get(self, request):
-        form = CustomUserCreationForm()
+        form = UserRegisterForm()
         return render(request, 'registro.html', {'form': form})
-
+    
     def post(self, request):
-        form = CustomUserCreationForm(request.POST)
+        form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('user-login')
         else:
             return render(request, 'registro.html', {'form': form})
 
 
+class Homepage(APIView):
+    def get(self, request):
+        return render(request, 'index.html')
 
-
+class UserLoginView(APIView):
+    def get(self, request):
+        form = UserLoginForm()
+        return render(request, 'login.html', {'form': form})
+    def post(self, request):
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('homepage')
+        else:
+            return render(request, 'login.html', {'form': form})
