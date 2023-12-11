@@ -70,18 +70,28 @@ class Voting(models.Model):
         # anon votes
         votes_format = []
         vote_list = []
-        for vote in votes:
-            preferences = []
-            for info in vote:
-                if info == 'a':
-                    votes_format.append(vote[info])
-                if info == 'b':
-                    votes_format.append(vote[info])
-                elif info == 'preference':
-                    preferences.append(vote[info])
-            votes_format.append(preferences)
-            vote_list.append(votes_format)
-            votes_format = []
+        if self.voting_type=='preference':
+            for vote in votes:
+                preferences = []
+                for info in vote:
+                    if info == 'a':
+                        votes_format.append(vote[info])
+                    if info == 'b':
+                        votes_format.append(vote[info])
+                    elif info == 'preference':
+                        preferences.append(vote[info])
+                votes_format.append(preferences)
+                vote_list.append(votes_format)
+                votes_format = []
+        else:
+            for vote in votes:
+                for info in vote:
+                    if info == 'a':
+                        votes_format.append(vote[info])
+                    if info == 'b':
+                        votes_format.append(vote[info])
+                vote_list.append(votes_format)
+                votes_format = []
         return vote_list
 
     def tally_votes(self, token=''):
@@ -97,29 +107,49 @@ class Voting(models.Model):
         auths = [{"name": a.name, "url": a.url} for a in self.auths.all()]
 
         if self.voting_type == 'preference':
-            tally_result = self.tally_preference_votes(votes)
+            self.tally_preference_votes(votes)
+            self.save()
+        else:
 
         # first, we do the shuffle
-        data = { "msgs": votes }
-        response = mods.post('mixnet', entry_point=shuffle_url, baseurl=auth.url, json=data,
-                response=True)
-        if response.status_code != 200:
+            data = { "msgs": votes }
+            response = mods.post('mixnet', entry_point=shuffle_url, baseurl=auth.url, json=data,
+                   response=True)
+            if response.status_code != 200:
             # TODO: manage error
-            pass
+                pass
 
         # then, we can decrypt that
-        data = {"msgs": response.json()}
-        response = mods.post('mixnet', entry_point=decrypt_url, baseurl=auth.url, json=data,
-                response=True)
+            data = {"msgs": response.json()}
+            response = mods.post('mixnet', entry_point=decrypt_url, baseurl=auth.url, json=data,
+                    response=True)
 
-        if response.status_code != 200:
+            if response.status_code != 200:
             # TODO: manage error
-            pass
+                pass
 
-        self.tally = response.json()
+            self.tally = response.json()
+            self.save()
+
+            self.do_postproc()
+    
+    def tally_preference_votes(self, votes):
+        option_scores = {opt.number: 0 for opt in self.question.options.all()}
+        weights = list(range(len(option_scores), 0, -1))
+        for vote in votes:
+            preferences = vote['preferences']
+            for i, option_number in enumerate(preferences):
+                option_scores[option_number] += weights[i]
+        opts = []
+        for opt_number, score in option_scores.items():
+            opts.append({
+                'option': self.question.options.get(number=opt_number).option,
+                'number': opt_number,
+                'votes': score
+            })
+        sorted_opts = sorted(opts, key=lambda x: x['votes'], reverse=True)
+        self.tally = sorted_opts
         self.save()
-
-        self.do_postproc()
 
     def do_postproc(self):
         tally = self.tally
@@ -127,35 +157,17 @@ class Voting(models.Model):
 
         opts = []
 
-        if self.voting_type == 'normal':
-
-            for opt in options:
-                if isinstance(tally, list):
+        for opt in options:
+            if isinstance(tally, list):
                     votes = tally.count(opt.number)
-                else:
-                    votes = 0
-                opts.append({
-                    'option': opt.option,
-                    'number': opt.number,
-                    'votes': votes
-                })
+            else:
+                votes = 0
+            opts.append({
+                'option': opt.option,
+                'number': opt.number,
+                'votes': votes
+            })
         
-        else:
-
-            option_counts = {opt.number: 0 for opt in options}
-
-            for pref in tally:
-
-                for rank, option_number in enumerate(pref, start=1):
-
-                    option_counts[option_number] += 1 /rank
-            
-            for opt_number, votes in option_counts.items():
-                opts.append({
-                    'option': options.get(number=opt_number).option,
-                    'number': opt_number,
-                    'votes': votes
-                })
 
         data = { 'type': 'IDENTITY', 'options': opts }
         postp = mods.post('postproc', json=data)
