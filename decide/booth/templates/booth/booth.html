@@ -134,17 +134,17 @@
 
     </div>
     <div v-if="!signup">
-        <button v-on:click="showStatistics" class="btn btn-secondary mt-3" style="margin-top: 20px;margin-left: 40px;" >Mostrar estadísticas</button>
+        <button v-on:click="showStatistics" id="statistics_btn" class="btn btn-secondary mt-3" style="margin-top: 20px;margin-left: 40px;" >Mostrar estadísticas</button>
     </div>
     
     <div v-if="statistics" class="statistics">
         <h3>Estadísticas en tiempo real de la votación</h3>
         <ul>
-            <li>Numero de votantes en la votación: [[ census ]]</li>
-            <li>Numero de votos emitidos hasta ahora: [[ votes ]]</li>
-            <li>Porcentaje de votos emitidos hasta ahora: [[ percentage ]]</li>
-            <li>Primer voto emitido: [[ first_date ]]</li>
-            <li>Último voto emitido: [[ last_date ]]</li>
+            <li id="stat_census">Numero de votantes en la votación: [[ census ]]</li>
+            <li id="stat_votes">Numero de votos emitidos hasta ahora: [[ votes ]]</li>
+            <li id="stat_percentage" v-if="votes!=0">Porcentaje de votos emitidos hasta ahora: [[ percentage ]]</li>
+            <li id="stat_first_date" v-if="first_date!=''">Primer voto emitido: [[ first_date ]]</li>
+            <li id="stat_last_date"v-if="last_date!=''">Último voto emitido: [[ last_date ]]</li>
         </ul>
     </div>
 
