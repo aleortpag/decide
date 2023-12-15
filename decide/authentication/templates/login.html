@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Inicio Sesion Usuario</title>
 </head>
+
 <body>
     <h2>Inicio de Sesion de Usuario</h2>
-    <form method="post">
+    
+    <form method="post" action="{% url 'user-login' %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Iniciar sesion</button>
+        <input type="submit" value="Iniciar Sesion"/>
     </form>
 
     {% if form.errors %}
         <p>Hubo errores en el formulario. Por favor, corrígelos:</p>
         {{ form.errors }}
     {% endif %}
+
 </body>
 </html>

@@ -32,6 +32,14 @@ class AuthTestCase(APITestCase):
 
         token = response.json()
         self.assertTrue(token.get('token'))
+    
+    def test_user_login(self):
+        data = {'username': 'voter1', 'password': '123'}
+        response = self.client.post('/authentication/iniciarSesion/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        token = response.json()
+        self.assertTrue(token.get('token'))
 
     def test_login_fail(self):
         data = {'username': 'voter1', 'password': '321'}

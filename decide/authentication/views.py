@@ -13,7 +13,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import UserRegisterForm, UserLoginForm
 from .serializers import UserSerializer
-from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login, logout
 
 
@@ -57,32 +56,48 @@ class RegisterView(APIView):
             return Response({}, status=HTTP_400_BAD_REQUEST)
         return Response({'user_pk': user.pk, 'token': token.key}, HTTP_201_CREATED)
 
+# ------------------------------------------------------------------------------------
+
+class Homepage(APIView):
+    def get(self, request):
+        wMessage = "Hola" + request.user.username
+        if request.user.is_authenticated:
+            wMessage = "Hola " + request.user.username
+        return render(request, 'index.html', {'wMessage': wMessage})
+
 class UserRegisterView(APIView):
     def get(self, request):
         form = UserRegisterForm()
         return render(request, 'registro.html', {'form': form})
     
-    def post(self, request):
-        form = UserRegisterForm(request.POST)
+    def post(request):
+        form = UserRegisterForm(request, data=request.POST)
         if form.is_valid():
             form.save()
             return redirect('user-login')
         else:
             return render(request, 'registro.html', {'form': form})
 
-
-class Homepage(APIView):
-    def get(self, request):
-        return render(request, 'index.html')
-
 class UserLoginView(APIView):
     def get(self, request):
         form = UserLoginForm()
         return render(request, 'login.html', {'form': form})
+    
     def post(self, request):
-        form = UserLoginForm(request.POST)
+        form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('homepage')
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('homepage')
+            else:
+                return render(request, 'login.html', {'form': form})
         else:
             return render(request, 'login.html', {'form': form})
+
+class UserLogout(APIView):
+    def get(self, request):
+        logout(request)
+        return redirect('homepage')

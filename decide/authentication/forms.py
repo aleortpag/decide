@@ -16,7 +16,9 @@ class UserRegisterForm(UserCreationForm):
 
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(widget=TextInput())
+    username.label = 'Nombre de usuario'
     password = forms.CharField(widget=PasswordInput())
+    password.label = 'Contraseña'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
