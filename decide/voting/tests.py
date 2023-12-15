@@ -45,7 +45,7 @@ class VotingTestCase(BaseTestCase):
         for i in range(5):
             opt = QuestionOption(question=q, option='option {}'.format(i+1))
             opt.save()
-        v = Voting(name='test voting', question=q)
+        v = Voting(name='test voting', question=q, voting_type='normal')
         v.save()
 
         a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
@@ -133,7 +133,8 @@ class VotingTestCase(BaseTestCase):
             'name': 'Example',
             'desc': 'Description example',
             'question': 'I want a ',
-            'question_opt': ['cat', 'dog', 'horse']
+            'question_opt': ['cat', 'dog', 'horse'],
+            'voting_type' : 'normal'
         }
 
         response = self.client.post('/voting/', data, format='json')

@@ -118,13 +118,25 @@
         <div v-if="!signup">
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
             <h2>[[ voting.question.desc ]]</h2>
-            <form v-for="opt in voting.question.options" :key="opt.number">
-                <div class="form-group">
+            <form v-if="votingType === 'normal'" >
+                <div class="form-group" v-for="opt in voting.question.options" :key="opt.number">
                     <input type="radio" v-model="selected"
                                 :id="'q' + opt.number"
-                                name="question"
+                                name="normal question"
                                 :value="opt.number">
                         [[ opt.option ]]
+                </div>
+            </form>
+            <form v-if="votingType === 'preference'" >
+                <div class="form-group" v-for="opt in voting.question.options" :key="opt.number">
+                    [[ opt.option ]]
+                    <input type="number" v-model="preferences[opt.number]"
+                                :id="'q' + opt.number"
+                                name="preference question"
+                                min="1"
+                                :max="voting.question.options.length"
+                                class="form-control"
+                                :placeholder="'Preference 1 to ' + voting.question.options.length">    
                 </div>
             </form>
             <button class="btn btn-primary mt-3" v-on:click="decideSend">
@@ -187,6 +199,8 @@
                     first_date: first_date,
                     last_date: last_date,
                     percentage: (votes / census * 100).toFixed(2) + "%",
+                    votingType: voting.voting_type,
+                    preferences: {},
                     selected: "",
                     signup: true,
                     statistics: false,
@@ -282,11 +296,19 @@
                     this.successVote = false;
                 },
                 decideEncrypt() {
-                    var bigmsg = BigInt.fromJSONObject(this.selected.toString());
-                    var cipher = ElGamal.encrypt(this.bigpk, bigmsg);
-                    return cipher;
+                    if (this.votingType === 'preference'){
+                        var preferencesArray = Object.values(this.preferences);
+                        var bigmsg = BigInt.fromJSONObject(JSON.stringify(preferencesArray));
+                        var cipher = ElGamal.encrypt(this.bigpk, bigmsg);
+                        return cipher;
+                    } else {
+                        var bigmsg = BigInt.fromJSONObject(this.selected.toString());
+                        var cipher = ElGamal.encrypt(this.bigpk, bigmsg);
+                        return cipher;
+                    }
                 },
                 decideSend(evt) {
+                    console.log("Button clicked");
                     evt.preventDefault();
                     var v = this.decideEncrypt();
                     var data = {
