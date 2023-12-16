@@ -100,12 +100,12 @@ class StatisticsTestCase(StaticLiveServerTestCase):
 
         # Create voters and add them to Census
         self.create_voter(voting)
-
         # Create pubkey for Voting
-        Voting.create_pubkey(voting)
-
+        voting.create_pubkey()
+        
         # Navigate to booth view
         self.driver.get(f'{self.live_server_url}/booth/{voting.id}/')
+        time.sleep(1)
 
         # Check stats button not visible (not logged already)
         stats = len(self.driver.find_elements(By.ID,'statistics_btn'))==0
