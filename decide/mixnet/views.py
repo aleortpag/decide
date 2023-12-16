@@ -25,7 +25,7 @@ class MixnetViewSet(viewsets.ModelViewSet):
          * position: int / nullable
          * key: { "p": int, "g": int } / nullable
         """
-
+        print("AQUI")
         auths = request.data.get("auths")
         voting = request.data.get("voting")
         key = request.data.get("key", {"p": 0, "g": 0})
@@ -61,7 +61,7 @@ class MixnetViewSet(viewsets.ModelViewSet):
         mn.pubkey = pubkey
         mn.save()
 
-        return  Response(KeySerializer(pubkey, many=False).data)
+        return Response(KeySerializer(pubkey, many=False).data)
 
 
 class Shuffle(APIView):
