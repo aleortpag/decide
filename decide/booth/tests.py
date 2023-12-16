@@ -48,6 +48,9 @@ class StatisticsTestCase(StaticLiveServerTestCase):
     def setUp(self):
         #Opciones de Chrome
         options = webdriver.ChromeOptions()
+        options.add_argument('--no-sandbox')
+        options.add_argument('--headless')
+
         # options.headless = True
         self.driver = webdriver.Chrome(options=options)
 
