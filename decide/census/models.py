@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 
+import pandas as pd
+
 from django.core.exceptions import ValidationError
 
 class Census(models.Model):
@@ -31,3 +33,20 @@ class CensusGroup(models.Model):
 
     def __str__(self):
         return self.name
+    
+class CensusImport(models.Model):
+    file = models.FileField()
+
+    def save(self):
+
+        excel = pd.read_excel(self.file)
+
+        for i,j in excel.iterrows():
+            voter = j['voter_id']
+            voting = j['voting_id']
+            
+            if not Census.objects.filter(voter_id=voter, voting_id=voting).exists():
+                census = Census(voter_id=voter, voting_id=voting)
+                census.save()
+
+        super().save()
