@@ -92,16 +92,18 @@ class StatisticsTestCase(StaticLiveServerTestCase):
 
     def test_statistics(self):   
         # Create voting, Question and Auth
-        voting = self.create_voting()
+        v = self.create_voting()
 
         # Create voters and add them to Census
-        self.create_voter(voting)
+        self.create_voter(v)
 
         # Create pubkey for Voting
-        Voting.create_pubkey(voting)
+        v.create_pubkey()
+        v.start_date = timezone.now()
+        v.save()
 
         # Navigate to booth view
-        self.driver.get(f'{self.live_server_url}/booth/{voting.id}/')
+        self.driver.get(f'{self.live_server_url}/booth/{v.id}/')
 
         # Check stats button not visible (not logged already)
         stats = len(self.driver.find_elements(By.ID,'statistics_btn'))==0
