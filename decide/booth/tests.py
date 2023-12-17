@@ -95,7 +95,9 @@ class StatisticsTestCase(StaticLiveServerTestCase):
 
     def test_statistics(self):   
         # Create voting, Question and Auth
+
         v = self.create_voting()
+
 
         # Create voters and add them to Census
         self.create_voter(v)

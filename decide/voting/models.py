@@ -1,15 +1,14 @@
 from django.db import models
 from django.db.models import JSONField
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from base import mods
 from base.models import Auth, Key
+from census.models import CensusGroup
 
 
 class Question(models.Model):
     desc = models.TextField()
-
 
     def __str__(self):
         return self.desc
@@ -48,6 +47,8 @@ class Voting(models.Model):
 
     tally = JSONField(blank=True, null=True)
     postproc = JSONField(blank=True, null=True)
+
+    group = models.ForeignKey(CensusGroup, related_name='votings', null=True, blank=True, on_delete=models.SET_NULL)
 
     def create_pubkey(self):
         if self.pub_key or not self.auths.count():
@@ -177,3 +178,4 @@ class Voting(models.Model):
 
     def __str__(self):
         return self.name
+    

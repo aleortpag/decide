@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.utils import timezone
+from django import forms
 
 from .models import QuestionOption
 from .models import Question
 from .models import Voting
+from census.models import CensusGroup
 
 from .filters import StartedFilter
 
@@ -45,6 +47,13 @@ class VotingAdmin(admin.ModelAdmin):
 
     actions = [ start, stop, tally ]
 
+
+class VotingAdminForm(forms.ModelForm):
+    group = forms.ModelChoiceField(queryset=CensusGroup.objects.all(), required=False, label='Select Group')
+
+    class Meta:
+        model = Voting
+        fields = '__all__'
 
 admin.site.register(Voting, VotingAdmin)
 admin.site.register(Question, QuestionAdmin)
