@@ -1,17 +1,9 @@
-import random
-from django.contrib.auth.models import User
-from django.test import TestCase
-from rest_framework.test import APIClient
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 
 from .models import Census
-from base import mods
 from base.tests import BaseTestCase
 from datetime import datetime
 
@@ -63,7 +55,7 @@ class CensusTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 409)
 
     def test_add_new_voters(self):
-        data = {'voting_id': 2, 'voters': [1,2,3,4]}
+        data = {'voting_id': 2, 'voters': [1, 2, 3, 4]}
         response = self.client.post('/census/', data, format='json')
         self.assertEqual(response.status_code, 401)
 
@@ -85,7 +77,7 @@ class CensusTestCase(BaseTestCase):
 
 class CensusTest(StaticLiveServerTestCase):
     def setUp(self):
-        #Load base test functionality for decide
+        # Load base test functionality for decide
         self.base = BaseTestCase()
         self.base.setUp()
 
@@ -100,7 +92,7 @@ class CensusTest(StaticLiveServerTestCase):
         self.driver.quit()
 
         self.base.tearDown()
-    
+
     def createCensusSuccess(self):
         self.cleaner.get(self.live_server_url+"/admin/login/?next=/admin/")
         self.cleaner.set_window_size(1280, 720)
@@ -155,7 +147,6 @@ class CensusTest(StaticLiveServerTestCase):
         self.cleaner.find_element(By.ID, "id_password").send_keys("Keys.ENTER")
 
         self.cleaner.get(self.live_server_url+"/admin/census/census/add")
-        now = datetime.now()
         self.cleaner.find_element(By.ID, "id_voting_id").click()
         self.cleaner.find_element(By.ID, "id_voting_id").send_keys('64654654654654')
         self.cleaner.find_element(By.ID, "id_voter_id").click()

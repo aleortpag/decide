@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
 
+
 class Census(models.Model):
     voting_id = models.PositiveIntegerField()
     voter_id = models.PositiveIntegerField()
@@ -23,7 +24,7 @@ class CensusGroup(models.Model):
         for user_id in self.users:
             if not User.objects.filter(id=user_id).exists():
                 raise ValidationError(f"El usuario con ID {user_id} no existe")
-            
+
     def save(self):
         for u in self.users:
             Census.objects.get_or_create(voter_id=u, voting_id=self.voting)
