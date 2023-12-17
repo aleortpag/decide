@@ -15,6 +15,7 @@ class Census(models.Model):
 class CensusGroup(models.Model):
     name = models.CharField(max_length=200)
     users = ArrayField(models.PositiveIntegerField(), default=list, blank=True)
+    voting = models.PositiveIntegerField()
 
     def clean(self):
         super().clean()
@@ -22,6 +23,11 @@ class CensusGroup(models.Model):
         for user_id in self.users:
             if not User.objects.filter(id=user_id).exists():
                 raise ValidationError(f"El usuario con ID {user_id} no existe")
+            
+    def save(self):
+        for u in self.users:
+            Census.objects.get_or_create(voter_id=u, voting_id=self.voting)
+        super().save()
 
     def __str__(self):
         return self.name

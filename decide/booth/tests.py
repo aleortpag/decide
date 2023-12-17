@@ -60,7 +60,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
         super().tearDown()
         self.driver.quit()
 
-    def create_voting(self, auth):
+    def create_voting(self):
         q = Question(desc='test question')
         q.save()
         
@@ -70,7 +70,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
         v = Voting(name='test voting', question=q, start_date=timezone.now())
         v.save()
         
-        a, _ = Auth.objects.get_or_create(url=auth,
+        a, _ = Auth.objects.get_or_create(url=self.live_server_url,
                                           defaults={'me': True, 'name': 'test auth'})
         a.save()
         v.auths.add(a)
@@ -94,9 +94,8 @@ class StatisticsTestCase(StaticLiveServerTestCase):
     
 
     def test_statistics(self):   
-        auth=self.driver.command_executor._url
         # Create voting, Question and Auth
-        voting = self.create_voting(auth)
+        voting = self.create_voting()
 
         # Create voters and add them to Census
         self.create_voter(voting)
