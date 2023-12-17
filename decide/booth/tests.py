@@ -70,7 +70,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
         v = Voting(name='test voting', question=q, start_date=timezone.now())
         v.save()
         
-        a, _ = Auth.objects.get_or_create(url=auth,
+        a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
                                           defaults={'me': True, 'name': 'test auth'})
         a.save()
         v.auths.add(a)
