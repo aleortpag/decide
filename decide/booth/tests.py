@@ -48,8 +48,8 @@ class StatisticsTestCase(StaticLiveServerTestCase):
     def setUp(self):
         #Opciones de Chrome
         options = webdriver.ChromeOptions()
-        options.add_argument('--no-sandbox')
-        options.add_argument('--headless')
+        # options.add_argument('--no-sandbox')
+        # options.add_argument('--headless')
 
         # options.headless = True
         self.driver = webdriver.Chrome(options=options)
@@ -70,7 +70,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
         v = Voting(name='test voting', question=q, start_date=timezone.now())
         v.save()
         
-        a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
+        a, _ = Auth.objects.get_or_create(url=self.live_server_url,
                                           defaults={'me': True, 'name': 'test auth'})
         a.save()
         v.auths.add(a)
@@ -108,7 +108,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
 
         # Navigate to booth view
         self.driver.get(f'{self.live_server_url}/booth/{v.id}/')
-
+        print(self.driver.request)
         # Check stats button not visible (not logged already)
         stats = len(self.driver.find_elements(By.ID,'statistics_btn'))==0
         self.assertTrue(stats)
