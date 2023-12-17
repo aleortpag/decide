@@ -60,7 +60,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
         super().tearDown()
         self.driver.quit()
 
-    def create_voting(self, auth):
+    def create_voting(self):
         q = Question(desc='test question')
         q.save()
         
