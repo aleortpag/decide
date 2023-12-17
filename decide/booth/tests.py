@@ -108,7 +108,7 @@ class StatisticsTestCase(StaticLiveServerTestCase):
 
         # Navigate to booth view
         self.driver.get(f'{self.live_server_url}/booth/{v.id}/')
-        print(self.driver.request)
+        
         # Check stats button not visible (not logged already)
         stats = len(self.driver.find_elements(By.ID,'statistics_btn'))==0
         self.assertTrue(stats)
