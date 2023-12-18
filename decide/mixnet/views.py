@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from .serializers import MixnetSerializer
 from .models import Auth, Mixnet, Key
-from base.serializers import KeySerializer, AuthSerializer
+from base.serializers import KeySerializer
 
 
 class MixnetViewSet(viewsets.ModelViewSet):
@@ -48,7 +48,7 @@ class MixnetViewSet(viewsets.ModelViewSet):
 
         mn.gen_key(p, g)
 
-        data = { "key": { "p": mn.key.p, "g": mn.key.g } }
+        data = {"key": {"p": mn.key.p, "g": mn.key.g}}
         # chained call to the next auth to gen the key
         resp = mn.chain_call("/", data)
         if resp:
@@ -88,14 +88,14 @@ class Shuffle(APIView):
 
         data = {
             "msgs": msgs,
-            "pk": { "p": p, "g": g, "y": y },
+            "pk": {"p": p, "g": g, "y": y},
         }
         # chained call to the next auth to gen the key
         resp = mn.chain_call("/shuffle/{}/".format(voting_id), data)
         if resp:
             msgs = resp
 
-        return  Response(msgs)
+        return Response(msgs)
 
 
 class Decrypt(APIView):
@@ -128,11 +128,11 @@ class Decrypt(APIView):
 
         data = {
             "msgs": msgs,
-            "pk": { "p": p, "g": g, "y": y },
+            "pk": {"p": p, "g": g, "y": y},
         }
         # chained call to the next auth to gen the key
         resp = mn.chain_call("/decrypt/{}/".format(voting_id), data)
         if resp:
             msgs = resp
 
-        return  Response(msgs)
+        return Response(msgs)

@@ -33,9 +33,6 @@ False
 True
 '''
 
-
-from pprint import pprint
-
 from Crypto.PublicKey import ElGamal
 from Crypto.Random import random
 from Crypto import Random
@@ -72,6 +69,7 @@ def multiple_decrypt_shuffle(ciphers, *crypts):
         last = i == len(crypts) - 1
         b = k.shuffle_decrypt(b, last)
     return b
+
 
 def multiple_decrypt_shuffle2(ciphers, *crypts, pubkey=None):
     '''
@@ -189,9 +187,9 @@ class MixCrypt:
 
         return ((a * a1) % p, (b * b1) % p)
 
-    def gen_perm(self, l):
-        x = list(range(l))
-        for i in range(l):
+    def gen_perm(self, s):
+        x = list(range(s))
+        for i in range(s):
             d = random.StrongRandom().randint(0, i)
             if i != d:
                 x[i] = x[d]
