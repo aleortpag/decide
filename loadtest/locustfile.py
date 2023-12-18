@@ -39,7 +39,7 @@ class DefVoters(SequentialTaskSet):
 
     @task
     def getuser(self):
-        self.usr=self.client.post("/authentication/getuser/", self.token).json()
+        self.usr = self.client.post("/authentication/getuser/", self.token).json()
         print(str(self.user))
 
     @task

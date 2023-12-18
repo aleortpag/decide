@@ -3,4 +3,4 @@
 exclude = migrations, __pycache__, venv
 max-line-length = 120
 extend-ignore =  E128, F405, F403, E722
-per-file-ignores = perms.py: F401, tests.py: E501, ./decide/settings.py: F401, ./mixnet/mixcrypt.py: E701 E714
+per-file-ignores = perms.py: F401, tests.py: E501, ./decide/decide/settings.py: F401, .decide/mixnet/mixcrypt.py: E701
