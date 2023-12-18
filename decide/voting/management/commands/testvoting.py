@@ -14,7 +14,6 @@ from mixnet.mixcrypt import ElGamal
 from voting.models import Voting, Question, QuestionOption
 
 
-
 class Command(BaseCommand):
     help = 'Test the full voting process with one auth (self)'
 
@@ -60,7 +59,7 @@ class Command(BaseCommand):
                 data = {
                     'voting': v.id,
                     'voter': voter.voter_id,
-                    'vote': { 'a': a, 'b': b },
+                    'vote': {'a': a, 'b': b},
                 }
                 clear[opt.number] += 1
                 voter = voters.pop()

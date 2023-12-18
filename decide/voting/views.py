@@ -18,7 +18,6 @@ class VotingView(generics.ListCreateAPIView):
     filterset_fields = ('id', )
 
     def get(self, request, *args, **kwargs):
-        idpath = kwargs.get('voting_id')
         self.queryset = Voting.objects.all()
         version = request.version
         if version not in settings.ALLOWED_VERSIONS:
@@ -32,7 +31,7 @@ class VotingView(generics.ListCreateAPIView):
         self.permission_classes = (UserIsStaff,)
         self.check_permissions(request)
         for data in ['name', 'desc', 'question', 'question_opt', 'voting_type']:
-            if not data in request.data:
+            if data not in request.data:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         question = Question(desc=request.data.get('question'))
