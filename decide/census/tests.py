@@ -1,8 +1,11 @@
 import random
+import pandas as pd
+import os
 from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.test import APIClient
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core.exceptions import SuspiciousFileOperation
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 from .models import Census
+from .models import CensusImport
 from base import mods
 from base.tests import BaseTestCase
 from datetime import datetime
@@ -81,6 +85,24 @@ class CensusTestCase(BaseTestCase):
         response = self.client.delete('/census/{}/'.format(1), data, format='json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(0, Census.objects.count())
+    
+    def test_import_census_success(self):
+        path = os.path.abspath('census_test.xlsx')
+        data = pd.read_excel(path)
+        
+        ci = CensusImport(file=path)
+        ci.save()
+
+        censos = Census.objects.all().count()
+
+        self.assertEqual(len(data.count(axis=1)), censos)
+
+    def test_import_census_fail(self):
+        path = "/bad/path/test.xlsx"
+        
+        ci = CensusImport(file=path)
+        with self.assertRaises(SuspiciousFileOperation):
+            ci.save()
 
 
 class CensusTest(StaticLiveServerTestCase):
@@ -164,3 +186,45 @@ class CensusTest(StaticLiveServerTestCase):
 
         self.assertTrue(self.cleaner.find_element_by_xpath('/html/body/div/div[3]/div/div[1]/div/form/div/p').text == 'Please correct the errors below.')
         self.assertTrue(self.cleaner.current_url == self.live_server_url+"/admin/census/census/add")
+
+    def createCensusImportSuccess(self):
+        self.cleaner.get(self.live_server_url+"/admin/login/?next=/admin/")
+        self.cleaner.set_window_size(1280, 720)
+
+        self.cleaner.find_element(By.ID, "id_username").click()
+        self.cleaner.find_element(By.ID, "id_username").send_keys("decide")
+
+        self.cleaner.find_element(By.ID, "id_password").click()
+        self.cleaner.find_element(By.ID, "id_password").send_keys("decide")
+
+        self.cleaner.find_element(By.ID, "id_password").send_keys("Keys.ENTER")
+
+        self.cleaner.get(self.live_server_url+"/admin/census/censusimport/add")
+        now = datetime.now()
+        self.cleaner.find_element(By.ID, "file").click()
+        file_input = self.cleaner.find_element(By.ID, "file")
+        path = os.path.abspath('census_test.xlsx')
+        file_input.send_keys(path)
+
+        self.cleaner.find_element(By.NAME, "_save").click()
+
+        self.assertTrue(self.cleaner.current_url == self.live_server_url+"/admin/census/censusimport")
+
+    def createCensusImportEmptyError(self):
+        self.cleaner.get(self.live_server_url+"/admin/login/?next=/admin/")
+        self.cleaner.set_window_size(1280, 720)
+
+        self.cleaner.find_element(By.ID, "id_username").click()
+        self.cleaner.find_element(By.ID, "id_username").send_keys("decide")
+
+        self.cleaner.find_element(By.ID, "id_password").click()
+        self.cleaner.find_element(By.ID, "id_password").send_keys("decide")
+
+        self.cleaner.find_element(By.ID, "id_password").send_keys("Keys.ENTER")
+
+        self.cleaner.get(self.live_server_url+"/admin/census/censusimport/add")
+
+        self.cleaner.find_element(By.NAME, "_save").click()
+
+        self.assertTrue(self.cleaner.find_element_by_xpath('/html/body/div/div[3]/div/div[1]/div/form/div/p').text == 'Please correct the errors below.')
+        self.assertTrue(self.cleaner.current_url == self.live_server_url+"/admin/census/censusimport/add")
