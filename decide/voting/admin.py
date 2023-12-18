@@ -45,7 +45,7 @@ class VotingAdmin(admin.ModelAdmin):
     list_filter = (StartedFilter,)
     search_fields = ('name', )
 
-    actions = [ start, stop, tally ]
+    actions = [start, stop, tally]
 
 
 class VotingAdminForm(forms.ModelForm):
@@ -54,6 +54,7 @@ class VotingAdminForm(forms.ModelForm):
     class Meta:
         model = Voting
         fields = '__all__'
+
 
 admin.site.register(Voting, VotingAdmin)
 admin.site.register(Question, QuestionAdmin)

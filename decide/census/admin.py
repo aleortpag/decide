@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-from django import forms
-
 from .models import Census
 from .models import CensusGroup
 from .models import CensusImport
@@ -15,8 +13,9 @@ class CensusAdmin(admin.ModelAdmin):
 
 
 class CensusGroupAdmin(admin.ModelAdmin):
-    list_display = ('name',)  
-    search_fields = ('name',)  
+    list_display = ('name',) 
+    search_fields = ('name',)
+
 
 class CensusImportAdmin(admin.ModelAdmin):
     list_display = ('file',)
