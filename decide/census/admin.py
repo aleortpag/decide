@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import Census
 from .models import CensusGroup
+from .models import CensusImport
 
 
 class CensusAdmin(admin.ModelAdmin):
@@ -12,9 +13,13 @@ class CensusAdmin(admin.ModelAdmin):
 
 
 class CensusGroupAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name',) 
     search_fields = ('name',)
 
 
+class CensusImportAdmin(admin.ModelAdmin):
+    list_display = ('file',)
+
 admin.site.register(Census, CensusAdmin)
 admin.site.register(CensusGroup, CensusGroupAdmin)
+admin.site.register(CensusImport, CensusImportAdmin)
