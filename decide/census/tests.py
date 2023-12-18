@@ -162,6 +162,7 @@ class CensusTest(StaticLiveServerTestCase):
         self.assertTrue(self.cleaner.find_element_by_xpath('/html/body/div/div[3]/div/div[1]/div/form/div/p').text == 'Please correct the errors below.')
         self.assertTrue(self.cleaner.current_url == self.live_server_url+"/admin/census/census/add")
 
+
 class CensusGroupTestCase(BaseTestCase):
 
     def setUp(self):
@@ -216,7 +217,7 @@ class CensusGroupTestCase(BaseTestCase):
         group.save()
 
         # Actualiza los campos del grupo
-        group.name="Nombre actualizado"
+        group.name = "Nombre actualizado"
         group.users = [5, 6, 7]
         group.save()
 
