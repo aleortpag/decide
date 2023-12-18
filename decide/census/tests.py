@@ -1,9 +1,15 @@
+from django.contrib.auth.models import User
+from django.conf import settings
+from mixnet.models import Auth
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from .models import Census
+from .models import Census, CensusGroup
+from voting.models import Voting, Question, QuestionOption
+
 from base.tests import BaseTestCase
 from datetime import datetime
 
@@ -155,3 +161,74 @@ class CensusTest(StaticLiveServerTestCase):
 
         self.assertTrue(self.cleaner.find_element_by_xpath('/html/body/div/div[3]/div/div[1]/div/form/div/p').text == 'Please correct the errors below.')
         self.assertTrue(self.cleaner.current_url == self.live_server_url+"/admin/census/census/add")
+
+class CensusGroupTestCase(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.voting = self.create_voting()
+        self.user_ids = self.create_users()
+        
+    def tearDown(self):
+        super().tearDown()
+        self.census = None
+
+    def create_voting(self):
+        q = Question(desc='Pregunta de prueba')
+        q.save()
+        for i in range(5):
+            opt = QuestionOption(question=q, option='Opcion {}'.format(i+1))
+            opt.save()
+        v = Voting(name='Votacion de prueba', question=q, voting_type='normal')
+        v.save()
+
+        a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
+                                          defaults={'me': True, 'name': 'test auth'})
+        a.save()
+        v.auths.add(a)
+
+        return v
+
+    def create_users(self):
+        ids = []
+        for i in range(10):
+            usr = User(username='user_{}'.format(i + 1))
+            usr.save()
+            ids.append(usr.id)
+
+        return ids
+
+    def test_create_census_group(self):
+        group = CensusGroup(name="Grupo de prueba", users=self.user_ids, voting=self.voting.id)
+        group.save()
+        censos = Census.objects.filter(voting_id=self.voting.id)
+
+        # Comprueba que los atributos y el se guardan correctamente
+        self.assertEqual(group.name, "Grupo de prueba")
+        self.assertEqual(len(group.users), len(self.user_ids))
+        self.assertTrue(CensusGroup.objects.filter(id=group.id).exists())
+
+        # Comprueba que se crean los censos para los usuarios del grupo y la votacion
+        self.assertEqual(len(censos), len(group.users))
+
+    def test_update_census_group(self):
+        group = CensusGroup(name="Grupo de prueba", users=self.user_ids, voting=self.voting.id)
+        group.save()
+
+        # Actualiza los campos del grupo
+        group.name="Nombre actualizado"
+        group.users = [5, 6, 7]
+        group.save()
+
+        updated = CensusGroup.objects.get(id=group.id)
+        self.assertEqual(updated.name, group.name)
+        self.assertTrue(len(updated.users), len(group.users))
+
+    def test_delete_census_group(self):
+        group = CensusGroup(name="Grupo de prueba", users=self.user_ids, voting=self.voting.id)
+        group.save()
+
+        created = CensusGroup.objects.get(id=group.id)
+        created.delete()
+        
+        self.assertTrue(not CensusGroup.objects.filter(id=group.id).exists())
