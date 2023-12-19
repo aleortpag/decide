@@ -3,8 +3,8 @@ name: Python application
 on:
   push:
     branches:
+      - main
       - develop
-      - master
 
 jobs:
   build:
@@ -43,12 +43,15 @@ jobs:
     - name: Run migrations (unnecessary)
       run: |
         cd decide
+        python manage.py makemigrations
         python manage.py migrate
     - name: Run tests
       run: |
         cd decide
         coverage run --branch --source=. ./manage.py test  --keepdb 
         coverage xml 
+    - name: Run flake8
+      run: flake8
     - name: Codacy Coverage Reporter
       uses: codacy/codacy-coverage-reporter-action@v1
       with:

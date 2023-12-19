@@ -145,6 +145,20 @@
         </div>
 
     </div>
+    <div v-if="!signup">
+        <button v-on:click="showStatistics" id="statistics_btn" class="btn btn-secondary mt-3" style="margin-top: 20px;margin-left: 40px;" >Mostrar estadísticas</button>
+    </div>
+    
+    <div v-if="statistics" class="statistics">
+        <h3>Estadísticas en tiempo real de la votación</h3>
+        <ul>
+            <li id="stat_census">Numero de votantes en la votación: [[ census ]]</li>
+            <li id="stat_votes">Numero de votos emitidos hasta ahora: [[ votes ]]</li>
+            <li id="stat_percentage" v-if="votes!=0">Porcentaje de votos emitidos hasta ahora: [[ percentage ]]</li>
+            <li id="stat_first_date" v-if="first_date!=''">Primer voto emitido: [[ first_date ]]</li>
+            <li id="stat_last_date"v-if="last_date!=''">Último voto emitido: [[ last_date ]]</li>
+        </ul>
+    </div>
 
 </div>
     
@@ -163,22 +177,33 @@
     <script src="{% static "crypto/elgamal.js" %}"></script>
 
     <!-- Vuejs -->
-    <script src="https://unpkg.com/vue@latest"</script>
+    <script src="https://unpkg.com/vue@latest"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
     <script src="https://unpkg.com/bootstrap@5.2.2/dist/js/bootstrap.js"></script>
 
     <script>
         const { createApp } = Vue
         var voting = {{voting|safe}};
+        var census = {{census|safe}};
+        var votes = {{votes|safe}};
+        var first_date = "{{ first_date|safe }}";
+        var last_date = "{{last_date|safe}}";
+        
         createApp({
             delimiters: ['[[', ']]'],
             data() {
                 return {
                     voting: voting,
+                    census: census,
+                    votes: votes,
+                    first_date: first_date,
+                    last_date: last_date,
+                    percentage: (votes / census * 100).toFixed(2) + "%",
                     votingType: voting.voting_type,
                     preferences: {},
                     selected: "",
                     signup: true,
+                    statistics: false,
                     successVote: false,
                     alertShow: false,
                     alertMsg: "",
@@ -307,7 +332,10 @@
                     this.alertLvl = lvl;
                     this.alertMsg = msg;
                     this.alertShow = true;
-                }
+                },
+                showStatistics(){
+                    this.statistics = !this.statistics;
+                },
             },
         }).mount('#app-booth')
     </script>

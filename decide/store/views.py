@@ -32,17 +32,12 @@ class StoreView(generics.ListAPIView):
         vid = request.data.get('voting')
         voting = mods.get('voting', params={'id': vid})
         if not voting or not isinstance(voting, list):
-            # print("por aqui 35")
             return Response({}, status=status.HTTP_401_UNAUTHORIZED)
         start_date = voting[0].get('start_date', None)
-        # print ("Start date: "+  start_date)
         end_date = voting[0].get('end_date', None)
-        #print ("End date: ", end_date)
         not_started = not start_date or timezone.now() < parse_datetime(start_date)
-        #print (not_started)
         is_closed = end_date and parse_datetime(end_date) < timezone.now()
         if not_started or is_closed:
-            #print("por aqui 42")
             return Response({}, status=status.HTTP_401_UNAUTHORIZED)
 
         uid = request.data.get('voter')
@@ -71,7 +66,7 @@ class StoreView(generics.ListAPIView):
         a = vote.get("a")
         b = vote.get("b")
 
-        defs = { "a": a, "b": b }
+        defs = {"a": a, "b": b}
         v, _ = Vote.objects.get_or_create(voting_id=vid, voter_id=uid,
                                           defaults=defs)
         v.a = a
@@ -79,4 +74,4 @@ class StoreView(generics.ListAPIView):
 
         v.save()
 
-        return  Response({})
+        return Response({})

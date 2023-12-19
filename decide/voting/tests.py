@@ -4,15 +4,9 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework.test import APITestCase
 
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 
 from base import mods
 from base.tests import BaseTestCase
@@ -21,7 +15,6 @@ from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
 from voting.models import Voting, Question, QuestionOption
-from datetime import datetime
 
 
 class VotingTestCase(BaseTestCase):
@@ -85,7 +78,7 @@ class VotingTestCase(BaseTestCase):
                 data = {
                     'voting': v.id,
                     'voter': voter.voter_id,
-                    'vote': { 'a': a, 'b': b },
+                    'vote': {'a': a, 'b': b},
                 }
                 clear[opt.number] += 1
                 user = self.get_or_create_user(voter.voter_id)
@@ -139,7 +132,7 @@ class VotingTestCase(BaseTestCase):
             'desc': 'Description example',
             'question': 'I want a ',
             'question_opt': ['cat', 'dog', 'horse'],
-            'voting_type' : 'normal'
+            'voting_type': 'normal'
         }
 
         response = self.client.post('/voting/', data, format='json')
@@ -149,8 +142,8 @@ class VotingTestCase(BaseTestCase):
         voting = self.create_voting()
 
         data = {'action': 'start'}
-        #response = self.client.post('/voting/{}/'.format(voting.pk), data, format='json')
-        #self.assertEqual(response.status_code, 401)
+        # response = self.client.post('/voting/{}/'.format(voting.pk), data, format='json')
+        # self.assertEqual(response.status_code, 401)
 
         # login with user no admin
         self.login(user='noadmin')
@@ -290,10 +283,11 @@ class VotingTestCase(BaseTestCase):
         return response.json()
 
 
+
 class LogInSuccessTests(StaticLiveServerTestCase):
 
     def setUp(self):
-        #Load base test functionality for decide
+        # Load base test functionality for decide
         self.base = BaseTestCase()
         self.base.setUp()
 
@@ -322,10 +316,11 @@ class LogInSuccessTests(StaticLiveServerTestCase):
         self.cleaner.find_element(By.ID, "id_password").send_keys("Keys.ENTER")
         self.assertTrue(self.cleaner.current_url == self.live_server_url+"/admin/")
 
+
 class LogInErrorTests(StaticLiveServerTestCase):
 
     def setUp(self):
-        #Load base test functionality for decide
+        # Load base test functionality for decide
         self.base = BaseTestCase()
         self.base.setUp()
 
@@ -344,7 +339,7 @@ class LogInErrorTests(StaticLiveServerTestCase):
     def usernameWrongLogIn(self):
         self.cleaner.get(self.live_server_url+"/admin/login/?next=/admin/")
         self.cleaner.set_window_size(1280, 720)
-        
+
         self.cleaner.find_element(By.ID, "id_username").click()
         self.cleaner.find_element(By.ID, "id_username").send_keys("usuarioNoExistente")
 
@@ -369,10 +364,11 @@ class LogInErrorTests(StaticLiveServerTestCase):
 
         self.assertTrue(self.cleaner.find_element_by_xpath('/html/body/div/div[2]/div/div[1]/p').text == 'Please enter the correct username and password for a staff account. Note that both fields may be case-sensitive.')
 
+
 class QuestionsTests(StaticLiveServerTestCase):
 
     def setUp(self):
-        #Load base test functionality for decide
+        # Load base test functionality for decide
         self.base = BaseTestCase()
         self.base.setUp()
 
@@ -401,7 +397,7 @@ class QuestionsTests(StaticLiveServerTestCase):
         self.cleaner.find_element(By.ID, "id_password").send_keys("Keys.ENTER")
 
         self.cleaner.get(self.live_server_url+"/admin/voting/question/add/")
-        
+
         self.cleaner.find_element(By.ID, "id_desc").click()
         self.cleaner.find_element(By.ID, "id_desc").send_keys('Test')
         self.cleaner.find_element(By.ID, "id_options-0-number").click()

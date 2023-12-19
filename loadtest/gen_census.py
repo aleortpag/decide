@@ -45,7 +45,6 @@ def add_census(voters_pk, voting_pk):
     response = requests.post(HOST + '/census/', json=data2, headers=auth)
 
 
-
 voters, invalids = create_voters('voters.json')
 add_census(voters, VOTING)
 print("Create voters with pk={0} \nInvalid usernames={1}".format(voters, invalids))
