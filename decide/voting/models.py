@@ -1,5 +1,8 @@
 from django.db import models
 from django.db.models import JSONField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.validators import int_list_validator
 
 from base import mods
 from base.models import Auth, Key
@@ -37,6 +40,7 @@ class Voting(models.Model):
     name = models.CharField(max_length=200)
     desc = models.TextField(blank=True, null=True)
     question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
+    preferences = models.CharField(validators=[int_list_validator], max_length=100)
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
