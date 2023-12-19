@@ -12,7 +12,7 @@ class AvailableVotingsView(TemplateView):
         votings = []
         for c in census:
             voting = Voting.objects.filter(id = c.voting_id)
-            for v in voting:    
+            for v in voting:
                 votacion = {}
                 votacion['id'] = v.id
                 votacion['name'] = v.name
