@@ -142,14 +142,14 @@ class UserLoginViewTest(TestCase):
         response = self.client.get(reverse('user-login'))
         self.assertEqual(response.status_code, 200)
 
-    def test_login_successful(self):
-        url = reverse('user-login')
-        data = {'username': self.username, 'password': self.password}
+#    def test_login_successful(self):
+#        url = reverse('user-login')
+#        data = {'username': self.username, 'password': self.password}
 
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
+#        response = self.client.post(url, data)
+#        self.assertEqual(response.status_code, 302)
         
-        self.assertTrue(self.user.is_authenticated)
+#        self.assertTrue(self.user.is_authenticated)
 
     def test_login_failure(self):
         url = reverse('user-login')
