@@ -65,6 +65,7 @@ class RegisterView(APIView):
 #             wMessage = "Hola " + request.user.username
 #         return render(request, 'index.html', {'wMessage': wMessage})
 
+
 class UserRegisterView(APIView):
     def get(self, request):
         form = UserRegisterForm()
@@ -78,11 +79,12 @@ class UserRegisterView(APIView):
         else:
             return render(request, 'registro.html', {'form': form})
 
+
 class UserLoginView(APIView):
     def get(self, request):
         form = UserLoginForm()
         return render(request, 'login.html', {'form': form})
-    
+
     def post(self, request):
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
@@ -96,6 +98,7 @@ class UserLoginView(APIView):
                 return render(request, 'login.html', {'form': form})
         else:
             return render(request, 'login.html', {'form': form})
+
 
 class UserLogout(APIView):
     def get(self, request):

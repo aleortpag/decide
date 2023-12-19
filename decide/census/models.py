@@ -43,7 +43,7 @@ class CensusImport(models.Model):
 
         excel = pd.read_excel(self.file)
 
-        for i,j in excel.iterrows():
+        for i, j in excel.iterrows():
             voter = j['voter_id']
             voting = j['voting_id']
             

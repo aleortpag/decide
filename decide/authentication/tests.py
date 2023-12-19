@@ -131,7 +131,6 @@ class AuthTestCase(APITestCase):
             ['token', 'user_pk']
         )
 
-# --------------------------------------------------------------------
 
 class UserLoginViewTest(TestCase):
     def setUp(self):
@@ -164,6 +163,7 @@ class UserLoginViewTest(TestCase):
 
         user = authenticate(username='incorrectuser', password='incorrectpassword')
         self.assertIsNone(user)
+
 
 class UserRegisterViewTest(TestCase):
     def setUp(self):
@@ -207,5 +207,3 @@ class UserRegisterViewTest(TestCase):
     #     self.assertContains(response, 'registro.html')
     #     # Verificar que no se ha creado un usuario en la base de datos
     #     self.assertFalse(User.objects.filter(username='testuser').exists())
-
-
