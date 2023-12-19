@@ -4,6 +4,7 @@ ALLOWED_HOSTS = ["*"]
 MODULES = [
     'authentication',
     'index',
+    'user',
     'base',
     'booth',
     'census',
@@ -17,6 +18,7 @@ BASEURL = 'http://localhost:8000'
 APIS = {
     'authentication': BASEURL,
     'index': BASEURL,
+    'user': BASEURL,
     'base': BASEURL,
     'booth': BASEURL,
     'census': BASEURL,

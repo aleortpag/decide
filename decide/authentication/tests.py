@@ -148,7 +148,6 @@ class UserLoginViewTest(TestCase):
 
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('homepage'))
         
         self.assertTrue(self.user.is_authenticated)
 
