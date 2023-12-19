@@ -20,6 +20,8 @@ CSRF_TRUSTED_ORIGINS = ['http://10.5.0.1:8000', 'http://localhost:8000']
 # Modules in use, commented modules that you won't use
 MODULES = [
     'authentication',
+    'index',
+    'user',
     'base',
     'booth',
     'census',
@@ -34,6 +36,8 @@ BASEURL = 'http://10.5.0.1:8000'
 
 APIS = {
     'authentication': 'http://10.5.0.1:8000',
+    'index': 'http://10.5.0.1:8000',
+    'user': 'http://10.5.0.1:8000',
     'base': 'http://10.5.0.1:8000',
     'booth': 'http://10.5.0.1:8000',
     'census': 'http://10.5.0.1:8000',
