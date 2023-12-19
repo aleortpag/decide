@@ -2,17 +2,11 @@ import datetime
 import random
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework.test import APITestCase
 
 from .models import Vote
 from .serializers import VoteSerializer
-from base import mods
-from base.models import Auth
 from base.tests import BaseTestCase
 from census.models import Census
-from mixnet.models import Key
 from voting.models import Question
 from voting.models import Voting
 
@@ -26,8 +20,7 @@ class StoreTextCase(BaseTestCase):
         self.voting = Voting(pk=5001,
                              name='voting example',
                              question=self.question,
-                             start_date=timezone.now(),
-        )
+                             start_date=timezone.now(),)
         self.voting.save()
 
     def tearDown(self):
@@ -60,7 +53,7 @@ class StoreTextCase(BaseTestCase):
             data = {
                 "voting": v,
                 "voter": random_user,
-                "vote": { "a": a, "b": b }
+                "vote": {"a": a, "b": b}
             }
             response = self.client.post('/store/', data, format='json')
             self.assertEqual(response.status_code, 200)
@@ -72,7 +65,7 @@ class StoreTextCase(BaseTestCase):
         data = {
             "voting": 1,
             "voter": 1,
-            "vote": { "a": 1, "b": 1 }
+            "vote": {"a": 1, "b": 1}
         }
         response = self.client.post('/store/', data, format='json')
         self.assertEqual(response.status_code, 401)
@@ -87,7 +80,7 @@ class StoreTextCase(BaseTestCase):
         data = {
             "voting": VOTING_PK,
             "voter": 1,
-            "vote": { "a": CTE_A, "b": CTE_B }
+            "vote": {"a": CTE_A, "b": CTE_B}
         }
         user = self.get_or_create_user(1)
         self.login(user=user.username)
@@ -168,7 +161,7 @@ class StoreTextCase(BaseTestCase):
         data = {
             "voting": 5001,
             "voter": 1,
-            "vote": { "a": 30, "b": 55 }
+            "vote": {"a": 30, "b": 55}
         }
         census = Census(voting_id=5001, voter_id=1)
         census.save()

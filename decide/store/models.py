@@ -10,7 +10,5 @@ class Vote(models.Model):
     a = BigBigField()
     b = BigBigField()
 
-
     def __str__(self):
         return 'voting_id:' + str(self.voting_id) + ', voter_id:' + str(self.voter_id) + ', voted:' + str(self.voted)
-    

@@ -3,6 +3,7 @@ ALLOWED_HOSTS = ["*"]
 # Modules in use, commented modules that you won't use
 MODULES = [
     'authentication',
+    'index',
     'base',
     'booth',
     'census',
@@ -15,6 +16,7 @@ MODULES = [
 BASEURL = 'http://localhost:8000'
 APIS = {
     'authentication': BASEURL,
+    'index': BASEURL,
     'base': BASEURL,
     'booth': BASEURL,
     'census': BASEURL,
@@ -25,14 +27,12 @@ APIS = {
     'voting': BASEURL,
 }
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'decide',
         'USER': 'decide',
-        'PASSWORD':'decide',
+        'PASSWORD': 'decide',
         'HOST': 'localhost',
         'PORT': '5432',
     }
