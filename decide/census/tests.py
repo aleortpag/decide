@@ -197,7 +197,6 @@ class CensusTest(StaticLiveServerTestCase):
         self.cleaner.find_element(By.ID, "id_password").send_keys("Keys.ENTER")
 
         self.cleaner.get(self.live_server_url+"/admin/census/censusimport/add")
-        now = datetime.now()
         self.cleaner.find_element(By.ID, "file").click()
         file_input = self.cleaner.find_element(By.ID, "file")
         path = os.path.abspath('census_test.xlsx')
