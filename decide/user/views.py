@@ -20,6 +20,7 @@ class AvailableVotingsView(TemplateView):
                 votacion = {}
                 votacion['id'] = v.id
                 votacion['name'] = v.name
+                votacion['type'] = v.voting_type
                 votings.append(votacion)
         context['votings'] = votings
         return context

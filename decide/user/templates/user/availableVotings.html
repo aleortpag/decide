@@ -66,7 +66,7 @@
         <!-- Voting -->
         <div>
             <ul>
-                <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]] <a :href="'/booth/' + v.id">Votar</a></li>
+                <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]]   -   Tipo: [[ v.type ]]   -   <a :href="'/booth/' + v.id">Votar</a></li>
             </ul>
         </div>    
 
