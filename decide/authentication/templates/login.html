@@ -18,6 +18,14 @@
         <input type="submit" value="Iniciar Sesion"/>
     </form>
 
+    <form method="get" action="{% url 'user-register' %}">
+        <input type="submit" value="Registrate"/>
+    </form>
+
+    <a href="/admin">Login como administrador</a>
+
+    
+
     {% if form.errors %}
         <p>Hubo errores en el formulario. Por favor, corrígelos:</p>
         {{ form.errors }}
