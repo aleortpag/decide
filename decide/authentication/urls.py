@@ -10,8 +10,8 @@ urlpatterns = [
     path('getuser/', GetUserView.as_view()),
     path('register/', RegisterView.as_view()),
 
-    path('', Homepage.as_view(),name='homepage'),
-    path('registro', UserRegisterView.as_view(), name='user-register'),
-    path('iniciarSesion', UserLoginView.as_view(), name='user-login'),
-    path('cerrarSesion', UserLogout.as_view(), name='user-logout'),
+    path('', Homepage.as_view(), name='homepage'),
+    path('registro/', UserRegisterView.as_view(), name='user-register'),
+    path('iniciarSesion/', UserLoginView.as_view(), name='user-login'),
+    path('cerrarSesion/', UserLogout.as_view(), name='user-logout'),
 ]
