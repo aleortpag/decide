@@ -56,23 +56,14 @@ class RegisterView(APIView):
             return Response({}, status=HTTP_400_BAD_REQUEST)
         return Response({'user_pk': user.pk, 'token': token.key}, HTTP_201_CREATED)
 
-# ------------------------------------------------------------------------------------
-
-# class Homepage(APIView):
-#     def get(self, request):
-#         wMessage = "Hola" + request.user.username
-#         if request.user.is_authenticated:
-#             wMessage = "Hola " + request.user.username
-#         return render(request, 'index.html', {'wMessage': wMessage})
-
 
 class UserRegisterView(APIView):
     def get(self, request):
         form = UserRegisterForm()
         return render(request, 'registro.html', {'form': form})
     
-    def post(request):
-        form = UserRegisterForm(request, data=request.POST)
+    def post(self, request):
+        form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('user-login')
