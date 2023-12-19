@@ -64,23 +64,17 @@
     </div>
         <div style="margin-top:25px;margin-left:25px;" v-if="!votings.length>0">
             <h2>No tienes votaciones disponibles</h2>
+        </div>
+        <!-- Voting -->
+        <div style="margin-top:25px;margin-left:25px;">
+            <ul>
+                <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]]   -   Tipo: [[ v.type ]] </li>
+            </ul>
             <form action="{% url "homepage" %}"> 
                 <input type="submit" value="Volver"/>
             </form>
-            <button href="{% url "homepage" %}">Volver</button> 
-        </div>
-        <!-- Voting -->
-    <div style="margin-top:25px;margin-left:25px;">
-        <ul>
-            <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]]   -   Tipo: [[ v.type ]] </li>
-        </ul>
-        <button href="{% url "homepage" %}">Volver</button> 
-    </div>    
+        </div>    
 
-
-        <div v-if="!signup">
-
-        </div>
 
    
 
