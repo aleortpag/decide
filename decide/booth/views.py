@@ -4,6 +4,8 @@ from django.conf import settings
 from django.http import Http404
 
 from base import mods
+from census.models import Census
+from store.models import Vote
 
 
 # TODO: check permissions and census
@@ -26,5 +28,22 @@ class BoothView(TemplateView):
             raise Http404
 
         context['KEYBITS'] = settings.KEYBITS
+
+        # Get the number of voters registered in the census
+        voters = Census.objects.filter(voting_id=vid)
+        context['census'] = len(voters)
+
+        # Get all the current votes
+        votes = Vote.objects.filter(voting_id=vid)
+        context['votes'] = len(votes)
+
+        if (context['votes'] > 0):
+            # Get first and las vote date/time
+            datestimes_list = [date.voted for date in votes]
+            first_date = datestimes_list[0]
+            last_date = sorted(datestimes_list, reverse=True)[0]
+
+            context['first_date'] = first_date.strftime("%d/%m/%Y  a las %H:%M")
+            context['last_date'] = last_date.strftime("%d/%m/%Y  a las %H:%M")
 
         return context
