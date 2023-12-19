@@ -3,6 +3,7 @@ from django.forms.widgets import PasswordInput, TextInput
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
     nombre = forms.CharField(max_length=50, required=True)
@@ -14,6 +15,7 @@ class UserRegisterForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(widget=TextInput())
     username.label = 'Nombre de usuario'
@@ -22,4 +24,3 @@ class UserLoginForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        

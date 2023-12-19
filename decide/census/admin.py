@@ -21,6 +21,7 @@ class CensusImportAdmin(admin.ModelAdmin):
     list_display = ('file', )
 
 
+
 admin.site.register(Census, CensusAdmin)
 admin.site.register(CensusGroup, CensusGroupAdmin)
 admin.site.register(CensusImport, CensusImportAdmin)
