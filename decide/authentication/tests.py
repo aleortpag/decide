@@ -1,8 +1,11 @@
+from django.test import TestCase, Client
 from rest_framework.test import APIClient
 from rest_framework.test import APITestCase
 
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from django.urls import reverse
+from django.contrib.auth import authenticate
 
 from base import mods
 
@@ -127,3 +130,82 @@ class AuthTestCase(APITestCase):
             sorted(list(response.json().keys())),
             ['token', 'user_pk']
         )
+
+# --------------------------------------------------------------------
+
+class UserLoginViewTest(TestCase):
+    def setUp(self):
+        self.username = 'testuser'
+        self.password = 'testpassword'
+        self.user = User.objects.create_user(username=self.username, password=self.password)
+
+    def test_login_page_exists(self):
+        response = self.client.get(reverse('user-login'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_successful(self):
+        url = reverse('user-login')
+        data = {'username': self.username, 'password': self.password}
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('homepage'))
+        
+        self.assertTrue(self.user.is_authenticated)
+
+    def test_login_failure(self):
+        url = reverse('user-login')
+        data = {'username': 'incorrectuser', 'password': 'incorrectpassword'}
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'login.html')
+
+        user = authenticate(username='incorrectuser', password='incorrectpassword')
+        self.assertIsNone(user)
+
+class UserRegisterViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.register_url = reverse('user-register')
+
+    def test_register_page_exists(self):
+        response = self.client.get(reverse('user-register'))
+        self.assertEqual(response.status_code, 200)
+
+    # def test_register_successful(self):
+    #     valid_data = {
+    #         'username': 'testuser',
+    #         'email': 'test@example.com',
+    #         'password1': 'testpassword123',
+    #         'password2': 'testpassword123',
+    #     }
+
+#         # Hacer una solicitud POST con datos válidos
+#         response = self.client.post(self.register_url, data=valid_data)
+
+#         # Verificar que la respuesta redirige al login después de un registro exitoso
+#         self.assertRedirects(response, reverse('user-login'))
+#         # Verificar que se ha creado un usuario en la base de datos
+#         self.assertTrue(User.objects.filter(username='testuser').exists())
+
+    # def test_register_failure(self):
+    #     invalid_data = {
+    #         'username': 'testuser',
+    #         'email': 'invalidemail',
+    #         'password1': 'testpassword123',
+    #         'password2': 'differentpassword',
+    #     }
+
+    #     response = self.client.post(self.register_url, data=invalid_data)
+
+    #     # Verificar que la respuesta no redirige y vuelve a mostrar el formulario de registro
+    #     self.assertEqual(response.status_code, 302)
+    #     self.assertIn('form', response.context)
+    #     # Verificar que el contenido de la respuesta contiene 'registro.html'
+    #     self.assertContains(response, 'registro.html')
+    #     # Verificar que no se ha creado un usuario en la base de datos
+    #     self.assertFalse(User.objects.filter(username='testuser').exists())
+
+
