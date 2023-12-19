@@ -62,14 +62,19 @@
             [[ alertMsg ]]
         </div>
     </div>
-
+        <div style="margin-top:25px;margin-left:25px;" v-if="!votings.length>0">
+            <h2>No tienes votaciones disponibles</h2>
+            <form action="{% url "homepage" %}"> 
+                <input type="submit" value="Volver"/>
+            </form>
+            <button href="{% url "homepage" %}">Volver</button> 
+        </div>
         <!-- Voting -->
-        <div>
-            <ul>
-                <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]]   -   Tipo: [[ v.type ]]   -   <a :href="'/booth/' + v.id">Votar</a></li>
-            </ul>
-        </div>    
-
+    <div style="margin-top:25px;margin-left:25px;">
+        <ul>
+            <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]]   -   Tipo: [[ v.type ]]   -   <a :href="'/booth/' + v.id">Votar</a></li>
+        </ul>
+    </div>    
 
 
         <div v-if="!signup">
