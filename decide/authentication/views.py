@@ -84,7 +84,7 @@ class UserLoginView(APIView):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('homepage')
+                return redirect('/user/{}/'.format(user.id))
             else:
                 return render(request, 'login.html', {'form': form})
         else:
