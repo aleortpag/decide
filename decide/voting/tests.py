@@ -47,7 +47,6 @@ class VotingTestCase(BaseTestCase):
         v.auths.add(a)
 
         return v
-    
 
     def create_voters(self, v):
         for i in range(100):
@@ -57,14 +56,12 @@ class VotingTestCase(BaseTestCase):
             c = Census(voter_id=u.id, voting_id=v.id)
             c.save()
 
-
     def get_or_create_user(self, pk):
         user, _ = User.objects.get_or_create(pk=pk)
         user.username = 'user{}'.format(pk)
         user.set_password('qwerty')
         user.save()
         return user
-
 
     def store_votes(self, v):
         voters = list(Census.objects.filter(voting_id=v.id))
@@ -86,7 +83,6 @@ class VotingTestCase(BaseTestCase):
                 voter = voters.pop()
                 mods.post('store', json=data)
         return clear
-
 
     def test_complete_voting(self):
         v = self.create_voting()
@@ -110,7 +106,6 @@ class VotingTestCase(BaseTestCase):
 
         for q in v.postproc:
             self.assertEqual(tally.get(q["number"], 0), q["votes"])
-
 
     def test_create_voting_from_api(self):
         data = {'name': 'Example'}
@@ -215,7 +210,6 @@ class VotingTestCase(BaseTestCase):
         response = self.client.put('/voting/{}/'.format(voting.pk), data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Voting already tallied')
-    
 
     def test_preference_voting_submission(self):
         v = self.create_preference_voting()
@@ -229,7 +223,6 @@ class VotingTestCase(BaseTestCase):
         self.submit_preference_vote(v, user_ballot_2)
 
         self.retrieve_preference_votes(v)
-
 
     def create_preference_voting(self):
         q = Question(desc='test question')
@@ -246,14 +239,6 @@ class VotingTestCase(BaseTestCase):
 
         v.auths.add(a)
         return v
-
-    def create_voters(self, v, num_voters=100):
-        for i in range(num_voters):
-            u, _ = User.objects.get_or_create(username=f'testvoter{i}')
-            u.is_active = True
-            u.save()
-            c = Census(voter_id=u.id, voting_id=v.id)
-            c.save()
 
     def submit_preference_vote(self, v, ballot):
 
@@ -281,7 +266,6 @@ class VotingTestCase(BaseTestCase):
         response = mods.get('voting', response=True)
         self.assertEqual(response.status_code, 200)
         return response.json()
-
 
 
 class LogInSuccessTests(StaticLiveServerTestCase):
