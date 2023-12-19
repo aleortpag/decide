@@ -58,12 +58,12 @@ class RegisterView(APIView):
 
 # ------------------------------------------------------------------------------------
 
-class Homepage(APIView):
-    def get(self, request):
-        wMessage = "Hola" + request.user.username
-        if request.user.is_authenticated:
-            wMessage = "Hola " + request.user.username
-        return render(request, 'index.html', {'wMessage': wMessage})
+# class Homepage(APIView):
+#     def get(self, request):
+#         wMessage = "Hola" + request.user.username
+#         if request.user.is_authenticated:
+#             wMessage = "Hola " + request.user.username
+#         return render(request, 'index.html', {'wMessage': wMessage})
 
 class UserRegisterView(APIView):
     def get(self, request):
