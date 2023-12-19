@@ -40,7 +40,7 @@ class Voting(models.Model):
     name = models.CharField(max_length=200)
     desc = models.TextField(blank=True, null=True)
     question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
-    preferences = models.CharField(validators=[int_list_validator], max_length=100)
+    preferences = models.CharField(validators=[int_list_validator], max_length=100, default='[0, 0, 0]')
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
