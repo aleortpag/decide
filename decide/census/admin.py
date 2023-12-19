@@ -13,12 +13,13 @@ class CensusAdmin(admin.ModelAdmin):
 
 
 class CensusGroupAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
+    list_display = ('name', )
+    search_fields = ('name', )
 
 
 class CensusImportAdmin(admin.ModelAdmin):
-    list_display = ('file',)
+    list_display = ('file', )
+
 
 
 admin.site.register(Census, CensusAdmin)
