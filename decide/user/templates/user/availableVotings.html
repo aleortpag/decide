@@ -66,8 +66,7 @@
         <!-- Voting -->
         <div>
             <ul>
-                <li v-for='v in votings' v-on:click = 'onSubmitBooth(v.id)'> [[ v.id ]] - [[ v.name ]] </li>    
-
+                <li v-for='v in votings'> [[ v.id ]] - [[ v.name ]] <a :href="'/booth/' + v.id">Votar</a></li>
             </ul>
         </div>    
 
@@ -104,12 +103,15 @@
         const { createApp } = Vue
         
         var votings = {{ votings|safe }}
+        var user_id = "{{ user_id|safe }}"
+  
 
         createApp({
             delimiters: ['[[', ']]'],
             data() {
                 return {
                     votings : votings,
+                    user_id : user_id,
                     signup: true,
                     alertShow: false,
                     alertMsg: "",
@@ -201,7 +203,7 @@
                     this.alertShow = true;
                 },
                 onSubmitBooth(id) {
-                    const url = '/booth/' + id + '/';
+                    const url = '/user/booth/' + id + '/';
                     var data = {token: this.token};
                     this.postData(url, data);
                 },
