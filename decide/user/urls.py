@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import AvailableVotingsView
-from booth.views import BoothView
 
 
 urlpatterns = [
